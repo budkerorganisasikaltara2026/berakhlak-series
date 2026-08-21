@@ -772,12 +772,12 @@
                             <span class="font-medium text-slate-700">${t.pic || '<span class="text-slate-300 italic">Belum ada</span>'}</span>
                         `}
                     </td>
-                    <td class="py-3 px-4 font-medium text-slate-600">
-                        ${isLeader ? `
-                            <input type="date" value="${t.deadline || ''}" onchange="quickUpdateTask('${t.id}', 'deadline', this.value)" class="bg-transparent text-xs outline-none text-slate-600">
-                        ` : `
-                            <span>${t.deadline || '-'}</span>
-                        `}
+<td class="py-3 px-4 font-medium text-slate-600">
+    ${isLeader ? `
+        <input type="date" value="${t.deadline || ''}" onchange="quickUpdateTask('${t.id}', 'deadline', this.value)" class="bg-transparent text-xs outline-none text-slate-600">
+    ` : `
+        <span>${t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</span>
+    `}
                     </td>
                     <td class="py-3 px-4">${statusSelectHTML}</td>
                     <td class="py-3 px-4">${fileCell}</td>
