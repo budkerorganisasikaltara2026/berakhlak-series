@@ -556,7 +556,7 @@
         window.appsScriptUrl = localStorage.getItem('berakhlak_sheets_webapp_url') || 'https://script.google.com/macros/s/AKfycbxDNw8XUJS6iyC48RrNg0ZzmIyz0u349Ei9S06UAtWAZ1a_jt4sk3w5zkNVnGOeA0tg/exec';
         
         window.tasks = [];
-        window.currentRole = 'tim';
+        window.currentRole = 'team';
         window.selectedCategory = 'ALL';
         window.statusChart = null;
         window.isSyncing = false;
@@ -728,7 +728,7 @@
                     `;
                 }
 
-                const isLeader = window.currentRole === 'leader';
+                const isLeader = window.currentRole === 'team';
 
                 let actionButtons = `
                     <div class="flex items-center justify-center gap-1">
