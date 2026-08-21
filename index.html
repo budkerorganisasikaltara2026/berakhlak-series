@@ -55,18 +55,24 @@
                 </div>
             </div>
 
-            <!-- Role Selector & Google Drive Quick Access -->
-            <div class="flex flex-wrap items-center gap-3 text-sm">
+            <!-- Role Selector & Integrasi Google Drive / Sheets -->
+            <div class="flex flex-wrap items-center gap-2 text-sm">
                 <!-- Sync status badge -->
-                <div id="sync-status" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs text-amber-400 font-medium">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <button onclick="openSheetsConfigModal()" id="sync-status" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs text-amber-400 font-medium hover:border-slate-500 transition">
+                    <span id="sync-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                     <span id="sync-text">Menghubungkan...</span>
-                </div>
+                </button>
+
+                <!-- Google Sheets Config Button -->
+                <button onclick="openSheetsConfigModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-700/30 hover:bg-emerald-700/40 border border-emerald-500/50 text-emerald-300 text-xs font-semibold transition shadow-sm">
+                    <i class="fa-solid fa-file-excel text-sm text-emerald-400"></i>
+                    <span>Konek Sheets</span>
+                </button>
 
                 <!-- Google Drive Main Folder Button -->
-                <button onclick="openDriveFolder()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold transition shadow-sm">
-                    <i class="fa-brands fa-google-drive text-sm text-emerald-400"></i>
-                    <span>Folder Drive Panitia</span>
+                <button onclick="openDriveFolder()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-700/30 hover:bg-sky-700/40 border border-sky-500/50 text-sky-300 text-xs font-semibold transition shadow-sm">
+                    <i class="fa-brands fa-google-drive text-sm text-sky-400"></i>
+                    <span>Folder Drive</span>
                 </button>
 
                 <!-- Role Toggle -->
@@ -132,11 +138,11 @@
             </div>
             <!-- Role Banner Actions -->
             <div class="flex items-center gap-2 self-end sm:self-auto">
-                <button onclick="openDriveConfigModal()" class="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-xl hover:bg-emerald-100 transition shadow-sm flex items-center gap-1.5">
-                    <i class="fa-brands fa-google-drive"></i> Atur Drive per Bidang
+                <button onclick="fetchTasksFromSheets()" class="px-3 py-1.5 text-xs font-semibold bg-white text-emerald-700 border border-emerald-300 rounded-xl hover:bg-emerald-50 transition shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate text-emerald-600"></i> Refresh Data
                 </button>
-                <button onclick="reseedDatabase()" class="px-3 py-1.5 text-xs font-semibold bg-white text-slate-700 border border-slate-300 rounded-xl hover:bg-slate-50 transition shadow-sm">
-                    <i class="fa-solid fa-arrows-rotate mr-1 text-slate-500"></i> Reset Checklists
+                <button onclick="openDriveConfigModal()" class="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-xl hover:bg-emerald-100 transition shadow-sm flex items-center gap-1.5">
+                    <i class="fa-brands fa-google-drive"></i> Link Drive Bidang
                 </button>
                 <button id="btn-add-task" onclick="openTaskModal()" class="px-3.5 py-1.5 text-xs font-semibold bg-sky-600 text-white rounded-xl hover:bg-sky-700 transition shadow-sm">
                     <i class="fa-solid fa-plus mr-1"></i> Tambah Tugas
@@ -450,6 +456,43 @@
         </div>
     </div>
 
+    <!-- Google Sheets Configuration Modal -->
+    <div id="modal-sheets-config" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-base font-bold text-slate-800"><i class="fa-solid fa-file-excel text-emerald-600 mr-2"></i> Pengaturan Integrasi Google Sheets</h3>
+                <button onclick="closeSheetsConfigModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="text-xs text-slate-600 space-y-2">
+                <p>Masukkan URL **Google Apps Script Web App** yang telah Anda terbitkan (*deploy*) dari Spreadsheet panitia.</p>
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+                    <span class="font-bold text-slate-700 block">Langkah Singkat:</span>
+                    <ol class="list-decimal pl-4 space-y-1 text-[11px] text-slate-500">
+                        <li>Buka Google Sheets &rarr; *Extensions* &rarr; *Apps Script*.</li>
+                        <li>Salin kode `Code.gs` ke editor Apps Script.</li>
+                        <li>Klik *Deploy* &rarr; *New Deployment* &rarr; Web App (*Execute as: Me*, *Who has access: Anyone*).</li>
+                        <li>Tempelkan URL Web App hasil deploy di bawah ini:</li>
+                    </ol>
+                </div>
+            </div>
+            <form onsubmit="saveSheetsUrl(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">URL Google Apps Script Web App</label>
+                    <input type="url" id="sheets-webapp-url" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-xs">
+                </div>
+                <div class="flex justify-between items-center pt-3 border-t">
+                    <button type="button" onclick="testSheetsConnection()" class="px-3 py-1.5 rounded-xl border border-emerald-300 text-emerald-700 hover:bg-emerald-50 font-semibold text-xs flex items-center gap-1">
+                        <i class="fa-solid fa-plug text-emerald-600"></i> Tes Koneksi
+                    </button>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="closeSheetsConfigModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium">Batal</button>
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm">Simpan & Sinkronkan</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Category Drive Configuration Modal (Leader Only) -->
     <div id="modal-drive-config" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
@@ -510,10 +553,13 @@
 
         const savedUrls = JSON.parse(localStorage.getItem('berakhlak_category_drive_urls')) || {};
         window.categoryDriveUrls = { ...DEFAULT_CATEGORY_DRIVE_URLS, ...savedUrls };
+        window.appsScriptUrl = localStorage.getItem('berakhlak_sheets_webapp_url') || '';
+        
         window.tasks = [];
         window.currentRole = 'leader';
         window.selectedCategory = 'ALL';
         window.statusChart = null;
+        window.isSyncing = false;
 
         window.initChart = function() {
             const ctx = document.getElementById('statusChart');
@@ -714,7 +760,7 @@
                 `;
 
                 tr.innerHTML = `
-                    <td class="py-3 px-4 text-center font-bold text-slate-500">${t.category}${t.code || (idx + 1)}</td>
+                    <td class="py-3 px-4 text-center font-bold text-slate-500">${t.id}</td>
                     <td class="py-3 px-4 font-semibold text-slate-800">
                         ${t.title}
                         <span class="block text-[10px] text-slate-400 font-normal">Bidang ${t.category}</span>
@@ -744,6 +790,140 @@
                 tbody.appendChild(tr);
             });
         };
+
+        // --- GOOGLE SHEETS SYNC LOGIC ---
+
+        window.fetchTasksFromSheets = async function() {
+            if (!window.appsScriptUrl) {
+                updateSyncUI('offline', 'Ketik URL Sheets');
+                return;
+            }
+
+            updateSyncUI('syncing', 'Mengambil data...');
+
+            try {
+                const response = await fetch(window.appsScriptUrl + '?action=getTasks');
+                const result = await response.json();
+
+                if (result.status === 'success' && Array.isArray(result.tasks)) {
+                    window.tasks = result.tasks;
+                    renderTasks();
+                    updateMetrics();
+                    populatePicOptions();
+                    updateSyncUI('connected', 'Tersambung Google Sheets');
+                } else {
+                    updateSyncUI('offline', 'Gagal format data');
+                }
+            } catch (err) {
+                console.error('Error fetching tasks from Google Sheets:', err);
+                updateSyncUI('offline', 'Gagal Konek Sheets');
+            }
+        };
+
+        window.syncSingleTaskToSheets = async function(task) {
+            if (!window.appsScriptUrl) return;
+
+            updateSyncUI('syncing', 'Menyimpan...');
+
+            try {
+                await fetch(window.appsScriptUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'saveTask',
+                        task: task
+                    })
+                });
+                updateSyncUI('connected', 'Tersimpan ke Sheets');
+            } catch (err) {
+                console.error('Error saving task to Google Sheets:', err);
+                updateSyncUI('offline', 'Gagal simpan');
+            }
+        };
+
+        window.deleteTaskFromSheets = async function(taskId) {
+            if (!window.appsScriptUrl) return;
+
+            updateSyncUI('syncing', 'Menghapus...');
+
+            try {
+                await fetch(window.appsScriptUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'deleteTask',
+                        id: taskId
+                    })
+                });
+                updateSyncUI('connected', 'Terhapus di Sheets');
+            } catch (err) {
+                console.error('Error deleting task from Google Sheets:', err);
+                updateSyncUI('offline', 'Gagal hapus');
+            }
+        };
+
+        function updateSyncUI(status, text) {
+            const dot = document.getElementById('sync-dot');
+            const txt = document.getElementById('sync-text');
+            const container = document.getElementById('sync-status');
+            if (!dot || !txt || !container) return;
+
+            if (status === 'connected') {
+                dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+                txt.textContent = text || "Tersambung Sheets";
+                container.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-800 text-xs text-emerald-400 font-medium hover:border-emerald-600 transition cursor-pointer";
+            } else if (status === 'syncing') {
+                dot.className = "w-2 h-2 rounded-full bg-sky-400 animate-ping";
+                txt.textContent = text || "Menyimpan...";
+                container.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-950/80 border border-sky-800 text-xs text-sky-400 font-medium cursor-pointer";
+            } else {
+                dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+                txt.textContent = text || "Belum Konek Sheets";
+                container.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs text-amber-400 font-medium hover:border-slate-500 transition cursor-pointer";
+            }
+        }
+
+        window.openSheetsConfigModal = function() {
+            document.getElementById('sheets-webapp-url').value = window.appsScriptUrl || '';
+            document.getElementById('modal-sheets-config').classList.remove('hidden');
+        };
+
+        window.closeSheetsConfigModal = function() {
+            document.getElementById('modal-sheets-config').classList.add('hidden');
+        };
+
+        window.saveSheetsUrl = async function(e) {
+            e.preventDefault();
+            const url = document.getElementById('sheets-webapp-url').value.trim();
+            window.appsScriptUrl = url;
+            localStorage.setItem('berakhlak_sheets_webapp_url', url);
+            closeSheetsConfigModal();
+            showToast("URL Google Sheets berhasil disimpan!", "success");
+            await fetchTasksFromSheets();
+        };
+
+        window.testSheetsConnection = async function() {
+            const url = document.getElementById('sheets-webapp-url').value.trim();
+            if (!url) {
+                alert("Harap masukkan URL Google Apps Script terlebih dahulu.");
+                return;
+            }
+
+            try {
+                showToast("Menguji koneksi ke Sheets...", "info");
+                const res = await fetch(url + '?action=getTasks');
+                const data = await res.json();
+                if (data.status === 'success') {
+                    showToast("Koneksi Google Sheets berhasil!", "success");
+                } else {
+                    showToast("Koneksi gagal: " + (data.message || "Error"), "error");
+                }
+            } catch (err) {
+                showToast("Gagal terhubung ke URL Google Apps Script.", "error");
+            }
+        };
+
+        // --- GENERAL APP HELPERS ---
 
         window.openDriveFolder = function(category = null) {
             let url = DEFAULT_CATEGORY_DRIVE_URLS['A'];
@@ -846,6 +1026,8 @@
                 'F': 'Tindak Lanjut'
             };
 
+            let updatedTask = null;
+
             if (id) {
                 const task = window.tasks.find(t => t.id === id);
                 if (task) {
@@ -856,17 +1038,11 @@
                     task.deadline = deadline;
                     task.status = status;
                     task.notes = notes;
-
-                    try {
-                        if (window.db && window.TASKS_COLLECTION_PATH) {
-                            const docRef = window.doc(window.db, ...window.TASKS_COLLECTION_PATH, id);
-                            await window.updateDoc(docRef, { category, categoryName: catNames[category], title, pic, deadline, status, notes });
-                        }
-                    } catch (err) { console.warn(err); }
+                    updatedTask = task;
                 }
             } else {
                 const newId = category + (Date.now() % 10000);
-                const newTask = {
+                newTask = {
                     id: newId,
                     category,
                     categoryName: catNames[category],
@@ -878,13 +1054,7 @@
                     notes
                 };
                 window.tasks.push(newTask);
-
-                try {
-                    if (window.db && window.TASKS_COLLECTION_PATH) {
-                        const docRef = window.doc(window.db, ...window.TASKS_COLLECTION_PATH, newId);
-                        await window.setDoc(docRef, newTask);
-                    }
-                } catch (err) { console.warn(err); }
+                updatedTask = newTask;
             }
 
             renderTasks();
@@ -892,6 +1062,10 @@
             populatePicOptions();
             closeTaskModal();
             showToast("Tugas berhasil disimpan!", "success");
+
+            if (updatedTask) {
+                await syncSingleTaskToSheets(updatedTask);
+            }
         };
 
         window.quickUpdateTask = async function(id, field, value) {
@@ -902,14 +1076,7 @@
             renderTasks();
             updateMetrics();
 
-            try {
-                if (window.db && window.TASKS_COLLECTION_PATH) {
-                    const docRef = window.doc(window.db, ...window.TASKS_COLLECTION_PATH, id);
-                    await window.updateDoc(docRef, { [field]: value });
-                }
-            } catch (e) {
-                console.warn("Firestore sync skipped:", e);
-            }
+            await syncSingleTaskToSheets(task);
         };
 
         window.deleteTask = async function(id) {
@@ -919,15 +1086,8 @@
             renderTasks();
             updateMetrics();
 
-            try {
-                if (window.db && window.TASKS_COLLECTION_PATH) {
-                    const docRef = window.doc(window.db, ...window.TASKS_COLLECTION_PATH, id);
-                    await window.deleteDoc(docRef);
-                    showToast("Kegiatan berhasil dihapus", "info");
-                }
-            } catch (e) {
-                console.warn("Firestore delete skipped:", e);
-            }
+            await deleteTaskFromSheets(id);
+            showToast("Kegiatan berhasil dihapus", "info");
         };
 
         window.handleFileSelection = function(e) {
@@ -1059,6 +1219,8 @@
             toastMsg.textContent = message;
             if (type === 'success') {
                 toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-base";
+            } else if (type === 'error') {
+                toastIcon.className = "fa-solid fa-circle-xmark text-rose-400 text-base";
             } else {
                 toastIcon.className = "fa-solid fa-circle-info text-sky-400 text-base";
             }
@@ -1068,210 +1230,15 @@
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         };
-    </script>
-
-    <!-- Firebase Script Initialization -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'berakhlak-2026';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
-            apiKey: "demo-key",
-            authDomain: "demo.firebaseapp.com",
-            projectId: "demo-project",
-            storageBucket: "demo.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:demo"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        window.db = db;
-        window.appId = appId;
-        window.auth = auth;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.updateDoc = updateDoc;
-        window.deleteDoc = deleteDoc;
-
-        const TASKS_COLLECTION_PATH = ['artifacts', appId, 'public', 'data', 'berakhlak_checklist_2026'];
-        window.TASKS_COLLECTION_PATH = TASKS_COLLECTION_PATH;
-
-        const INITIAL_CHECKLIST_DATA = [
-            // A. ADMINISTRASI & PERSURATAN
-            { id: "A1", category: "A", categoryName: "Administrasi & Persuratan", code: 1, title: "SK/Surat Penetapan Narasumber ACT Consulting", pic: "", deadline: "2026-08-25", status: "Belum Mulai", notes: "" },
-            { id: "A2", category: "A", categoryName: "Administrasi & Persuratan", code: 2, title: "Surat Permohonan Narasumber kepada ACT Consulting", pic: "", deadline: "2026-08-25", status: "Belum Mulai", notes: "" },
-            { id: "A3", category: "A", categoryName: "Administrasi & Persuratan", code: 3, title: "Surat Undangan Tim Implementasi BerAKHLAK Perangkat Daerah", pic: "", deadline: "2026-08-26", status: "Belum Mulai", notes: "" },
-            { id: "A4", category: "A", categoryName: "Administrasi & Persuratan", code: 4, title: "Surat Undangan Bagian Organisasi Kabupaten/Kota", pic: "", deadline: "2026-08-26", status: "Belum Mulai", notes: "" },
-            { id: "A5", category: "A", categoryName: "Administrasi & Persuratan", code: 5, title: "Surat Undangan Pegawai Biro Organisasi", pic: "", deadline: "2026-08-27", status: "Belum Mulai", notes: "" },
-            { id: "A6", category: "A", categoryName: "Administrasi & Persuratan", code: 6, title: "Surat Membuka Acara", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
-            { id: "A7", category: "A", categoryName: "Administrasi & Persuratan", code: 7, title: "Surat Tugas/Penugasan Panitia", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
-            { id: "A8", category: "A", categoryName: "Administrasi & Persuratan", code: 8, title: "Finalisasi daftar/nama peserta (90 orang)", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
-            { id: "A9", category: "A", categoryName: "Administrasi & Persuratan", code: 9, title: "Daftar hadir peserta", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
-            { id: "A10", category: "A", categoryName: "Administrasi & Persuratan", code: 10, title: "Sertifikat peserta dan narasumber", pic: "", deadline: "2026-08-31", status: "Belum Mulai", notes: "" },
-            { id: "A11", category: "A", categoryName: "Administrasi & Persuratan", code: 11, title: "Surat perjalanan dinas", pic: "", deadline: "2026-08-31", status: "Belum Mulai", notes: "" },
-            { id: "A12", category: "A", categoryName: "Administrasi & Persuratan", code: 12, title: "Dokumentasi administrasi kegiatan", pic: "", deadline: "2026-09-01", status: "Belum Mulai", notes: "" },
-
-            // B. NARASUMBER & SUBSTANSI
-            { id: "B1", category: "B", categoryName: "Narasumber & Substansi", code: 1, title: "Konfirmasi kesediaan 2 narasumber ACT Consulting", pic: "", deadline: "2026-08-25", status: "Belum Mulai", notes: "" },
-            { id: "B2", category: "B", categoryName: "Narasumber & Substansi", code: 2, title: "Finalisasi materi dengan narasumber", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
-            { id: "B3", category: "B", categoryName: "Narasumber & Substansi", code: 3, title: "Brief/TOR untuk narasumber", pic: "", deadline: "2026-08-26", status: "Belum Mulai", notes: "" },
-            { id: "B4", category: "B", categoryName: "Narasumber & Substansi", code: 4, title: "Rundown/susunan acara 2 hari", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
-            { id: "B5", category: "B", categoryName: "Narasumber & Substansi", code: 5, title: "Penetapan MC", pic: "", deadline: "2026-08-27", status: "Belum Mulai", notes: "" },
-            { id: "B6", category: "B", categoryName: "Narasumber & Substansi", code: 6, title: "Instrumen evaluasi kegiatan", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
-
-            // C. TEMPAT, AKOMODASI & KONTRAK
-            { id: "C1", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 1, title: "Booking Hotel Luminor Tanjung Selor", pic: "", deadline: "2026-08-24", status: "Belum Mulai", notes: "" },
-            { id: "C2", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 2, title: "Finalisasi kebutuhan ruang kegiatan", pic: "", deadline: "2026-08-27", status: "Belum Mulai", notes: "" },
-            { id: "C3", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 3, title: "Finalisasi jumlah peserta dan panitia", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
-            { id: "C4", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 4, title: "Konfirmasi kebutuhan kamar", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
-            { id: "C5", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 5, title: "Konfirmasi konsumsi (coffee break, makan, dll.)", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
-            { id: "C6", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 6, title: "Konfirmasi fasilitas meeting", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
-            { id: "C7", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 7, title: "Konfirmasi sound system, LCD/proyektor, microphone", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
-            { id: "C8", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 8, title: "Kontrak kegiatan dengan hotel", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
-            { id: "C9", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 9, title: "Kontrak/administrasi dengan ACT Consulting", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
-            { id: "C10", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 10, title: "Konfirmasi dokumen dan mekanisme pembayaran", pic: "", deadline: "2026-08-31", status: "Belum Mulai", notes: "" },
-
-            // D. PERLENGKAPAN & BRANDING
-            { id: "D1", category: "D", categoryName: "Perlengkapan & Branding", code: 1, title: "Desain dan cetak spanduk/backdrop", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
-            { id: "D2", category: "D", categoryName: "Perlengkapan & Branding", code: 2, title: "Sertifikat cetak/digital", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
-            { id: "D3", category: "D", categoryName: "Perlengkapan & Branding", code: 3, title: "Dokumentasi foto/video panitia & tim media", pic: "", deadline: "2026-08-31", status: "Belum Mulai", notes: "" },
-            { id: "D4", category: "D", categoryName: "Perlengkapan & Branding", code: 4, title: "Pengecekan seluruh perlengkapan teknis", pic: "", deadline: "2026-09-01", status: "Belum Mulai", notes: "" },
-
-            // E. PELAKSANAAN HARI H
-            { id: "E1", category: "E", categoryName: "Pelaksanaan Hari H", code: 1, title: "Registrasi peserta", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
-            { id: "E2", category: "E", categoryName: "Pelaksanaan Hari H", code: 2, title: "Daftar hadir", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
-            { id: "E3", category: "E", categoryName: "Pelaksanaan Hari H", code: 3, title: "Pengecekan ruangan", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
-            { id: "E4", category: "E", categoryName: "Pelaksanaan Hari H", code: 4, title: "Pengecekan audio, microphone, LCD, laptop, dan koneksi", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
-            { id: "E5", category: "E", categoryName: "Pelaksanaan Hari H", code: 5, title: "Penyambutan dan pendampingan narasumber", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
-            { id: "E6", category: "E", categoryName: "Pelaksanaan Hari H", code: 6, title: "MC dan moderator siap", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
-            { id: "E7", category: "E", categoryName: "Pelaksanaan Hari H", code: 7, title: "Dokumentasi kegiatan", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
-            { id: "E8", category: "E", categoryName: "Pelaksanaan Hari H", code: 8, title: "Pengaturan konsumsi", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
-            { id: "E9", category: "E", categoryName: "Pelaksanaan Hari H", code: 9, title: "Evaluasi peserta", pic: "", deadline: "2026-09-03", status: "Belum Mulai", notes: "" },
-
-            // F. TINDAK LANJUT
-            { id: "F1", category: "F", categoryName: "Tindak Lanjut", code: 1, title: "Rekap hasil evaluasi", pic: "", deadline: "2026-09-04", status: "Belum Mulai", notes: "" },
-            { id: "F2", category: "F", categoryName: "Tindak Lanjut", code: 2, title: "Dokumentasi dan publikasi kegiatan", pic: "", deadline: "2026-09-05", status: "Belum Mulai", notes: "" },
-            { id: "F3", category: "F", categoryName: "Tindak Lanjut", code: 3, title: "Penyusunan laporan pelaksanaan kegiatan", pic: "", deadline: "2026-09-07", status: "Belum Mulai", notes: "" },
-            { id: "F4", category: "F", categoryName: "Tindak Lanjut", code: 4, title: "Dokumentasi pertanggungjawaban administrasi dan keuangan", pic: "", deadline: "2026-09-10", status: "Belum Mulai", notes: "" },
-            { id: "F5", category: "F", categoryName: "Tindak Lanjut", code: 5, title: "Rencana monitoring tindak lanjut Action Plan", pic: "", deadline: "2026-09-12", status: "Belum Mulai", notes: "" }
-        ];
-
-        async function initApp() {
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                updateSyncStatus('connected');
-                subscribeToTasks();
-            } catch (err) {
-                console.error("Auth initialization fallback:", err);
-                updateSyncStatus('offline');
-                if (window.tasks.length === 0) {
-                    window.tasks = [...INITIAL_CHECKLIST_DATA];
-                    window.renderTasks();
-                    window.updateMetrics();
-                    window.populatePicOptions();
-                }
-            }
-        }
-
-        function subscribeToTasks() {
-            const colRef = collection(db, ...TASKS_COLLECTION_PATH);
-            onSnapshot(colRef, (snapshot) => {
-                if (snapshot.empty) {
-                    seedInitialData();
-                    return;
-                }
-
-                const loaded = [];
-                snapshot.forEach(docSnap => {
-                    loaded.push({ id: docSnap.id, ...docSnap.data() });
-                });
-
-                loaded.sort((a, b) => {
-                    if (a.category !== b.category) return a.category.localeCompare(b.category);
-                    return (a.code || 0) - (b.code || 0);
-                });
-
-                window.tasks = loaded;
-                window.renderTasks();
-                window.updateMetrics();
-                window.populatePicOptions();
-                updateSyncStatus('connected');
-            }, (error) => {
-                console.error("Firestore listener error:", error);
-                updateSyncStatus('offline');
-                if (window.tasks.length === 0) {
-                    window.tasks = [...INITIAL_CHECKLIST_DATA];
-                    window.renderTasks();
-                    window.updateMetrics();
-                    window.populatePicOptions();
-                }
-            });
-        }
-
-        async function seedInitialData() {
-            try {
-                for (const item of INITIAL_CHECKLIST_DATA) {
-                    const docRef = doc(db, ...TASKS_COLLECTION_PATH, item.id);
-                    await setDoc(docRef, item);
-                }
-                window.showToast("Checklist awal berhasil dipasang!", "success");
-            } catch (err) {
-                console.error("Error seeding initial data:", err);
-            }
-        }
-
-        window.reseedDatabase = async function() {
-            if (confirm("Reset ulang seluruh checklist ke data awal? Perubahan saat ini akan tertimpa.")) {
-                await seedInitialData();
-            }
-        };
-
-        function updateSyncStatus(type) {
-            const el = document.getElementById('sync-status');
-            const txt = document.getElementById('sync-text');
-            if (!el || !txt) return;
-
-            if (type === 'connected') {
-                el.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-800 text-xs text-emerald-400 font-medium";
-                txt.textContent = "Terhubung (Real-time)";
-            } else {
-                el.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs text-amber-400 font-medium";
-                txt.textContent = "Mode Lokal / Offline";
-            }
-        }
 
         window.addEventListener('DOMContentLoaded', () => {
             window.initChart();
-            initApp();
+            if (window.appsScriptUrl) {
+                fetchTasksFromSheets();
+            } else {
+                updateSyncUI('offline', 'Koneksikan Sheets');
+            }
         });
-        const SCRIPT_URL = https://script.google.com/macros/s/AKfycbxiL0JgC7dYUGy2lq0CSDKWAsq1slH5Vy4Dws1bPr7AIvN5moa1kHNO73l1Ig1DjbSh/exec;
-
-async function loadDataOnline() {
-  const response = await fetch(SCRIPT_URL);
-  const data = await response.json();
-  if (data && data.length > 0) {
-    // Perbarui variabel state tasks di dashboard Anda dengan data dari sheet
-    tasks = data;
-    renderTasks(); 
-  }
-}
-        async function saveDataOnline() {
-  await fetch(SCRIPT_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(tasks)
-  });
-}
     </script>
 </body>
 </html>
