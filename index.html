@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Persiapan BerAKHLAK Series 2.0</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#075985',
+                            900: '#0c4a6e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-sky-500/30">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight leading-tight">BerAKHLAK Series 2.0</h1>
+                    <p class="text-xs text-sky-300">ASN Adaptif: Berubah, Berinovasi, Berdampak</p>
+                </div>
+            </div>
+
+            <!-- Role Selector & Google Drive Quick Access -->
+            <div class="flex flex-wrap items-center gap-3 text-sm">
+                <!-- Sync status badge -->
+                <div id="sync-status" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs text-amber-400 font-medium">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <span id="sync-text">Menghubungkan...</span>
+                </div>
+
+                <!-- Google Drive Main Folder Button -->
+                <button onclick="openDriveFolder()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold transition shadow-sm">
+                    <i class="fa-brands fa-google-drive text-sm text-emerald-400"></i>
+                    <span>Folder Drive Panitia</span>
+                </button>
+
+                <!-- Role Toggle -->
+                <div class="bg-slate-800 p-1 rounded-xl border border-slate-700 flex items-center">
+                    <button id="btn-role-leader" onclick="switchRole('leader')" class="px-3 py-1 rounded-lg text-xs font-semibold transition-all bg-sky-600 text-white shadow">
+                        <i class="fa-solid fa-user-shield mr-1"></i> Mode Leader
+                    </button>
+                    <button id="btn-role-team" onclick="switchRole('team')" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all">
+                        <i class="fa-solid fa-users mr-1"></i> Mode Tim
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Event Banner Info -->
+    <section class="bg-gradient-to-r from-slate-900 via-sky-900 to-slate-900 text-white border-b border-sky-800/40 py-5 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-4 text-xs sm:text-sm">
+            <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                <div class="p-2.5 rounded-lg bg-sky-500/20 text-sky-400"><i class="fa-regular fa-calendar-days text-lg"></i></div>
+                <div>
+                    <span class="block text-slate-400 text-xs">Waktu Pelaksanaan</span>
+                    <span class="font-semibold text-slate-100">2 s.d. 3 September 2026</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                <div class="p-2.5 rounded-lg bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-location-dot text-lg"></i></div>
+                <div>
+                    <span class="block text-slate-400 text-xs">Lokasi Acara</span>
+                    <span class="font-semibold text-slate-100">Hotel Luminor Tanjung Selor</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                <div class="p-2.5 rounded-lg bg-purple-500/20 text-purple-400"><i class="fa-solid fa-chalkboard-user text-lg"></i></div>
+                <div>
+                    <span class="block text-slate-400 text-xs">Narasumber</span>
+                    <span class="font-semibold text-slate-100">2 Orang (ACT Consulting)</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                <div class="p-2.5 rounded-lg bg-amber-500/20 text-amber-400"><i class="fa-solid fa-users text-lg"></i></div>
+                <div>
+                    <span class="block text-slate-400 text-xs">Target Peserta</span>
+                    <span class="font-semibold text-slate-100">90 Orang Peserta</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Banner Info for Current Role -->
+        <div id="role-banner" class="bg-sky-50 border border-sky-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-lg">
+                    <i id="role-banner-icon" class="fa-solid fa-user-shield"></i>
+                </span>
+                <div>
+                    <h3 id="role-banner-title" class="font-bold text-sky-900">Selamat Datang, Leader Panitia!</h3>
+                    <p id="role-banner-desc" class="text-xs text-sky-700">Anda dapat membagi PIC tugas, menentukan deadline, serta memantau seluruh progres kegiatan secara real-time.</p>
+                </div>
+            </div>
+            <!-- Role Banner Actions -->
+            <div class="flex items-center gap-2 self-end sm:self-auto">
+                <button onclick="openDriveConfigModal()" class="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-xl hover:bg-emerald-100 transition shadow-sm flex items-center gap-1.5">
+                    <i class="fa-brands fa-google-drive"></i> Atur Drive per Bidang
+                </button>
+                <button onclick="reseedDatabase()" class="px-3 py-1.5 text-xs font-semibold bg-white text-slate-700 border border-slate-300 rounded-xl hover:bg-slate-50 transition shadow-sm">
+                    <i class="fa-solid fa-arrows-rotate mr-1 text-slate-500"></i> Reset Checklists
+                </button>
+                <button id="btn-add-task" onclick="openTaskModal()" class="px-3.5 py-1.5 text-xs font-semibold bg-sky-600 text-white rounded-xl hover:bg-sky-700 transition shadow-sm">
+                    <i class="fa-solid fa-plus mr-1"></i> Tambah Tugas
+                </button>
+            </div>
+        </div>
+
+        <!-- Metrics Overview Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-center text-slate-500 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Total Tugas</span>
+                    <i class="fa-solid fa-list-check text-slate-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                    <span id="metric-total" class="text-2xl font-bold text-slate-800">0</span>
+                    <span class="text-xs font-medium text-slate-400">Items</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-center text-slate-500 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Belum Mulai</span>
+                    <i class="fa-solid fa-clock text-slate-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                    <span id="metric-notstarted" class="text-2xl font-bold text-slate-600">0</span>
+                    <span id="metric-notstarted-pct" class="text-xs font-medium text-slate-400">0%</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-center text-blue-600 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Dalam Proses</span>
+                    <i class="fa-solid fa-spinner text-blue-500"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                    <span id="metric-inprogress" class="text-2xl font-bold text-blue-600">0</span>
+                    <span id="metric-inprogress-pct" class="text-xs font-medium text-blue-400">0%</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-center text-emerald-600 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Selesai</span>
+                    <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                    <span id="metric-completed" class="text-2xl font-bold text-emerald-600">0</span>
+                    <span id="metric-completed-pct" class="text-xs font-medium text-emerald-500">0%</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between col-span-2 md:col-span-1">
+                <div class="flex justify-between items-center text-rose-600 mb-2">
+                    <span class="text-xs font-medium uppercase tracking-wider">Tertunda</span>
+                    <i class="fa-solid fa-triangle-exclamation text-rose-500"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                    <span id="metric-delayed" class="text-2xl font-bold text-rose-600">0</span>
+                    <span id="metric-delayed-pct" class="text-xs font-medium text-rose-400">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar & Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Overall Progress Summary -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <h4 class="font-bold text-slate-800 text-sm">Persentase Kesiapan Kegiatan</h4>
+                        <span id="overall-percent" class="text-lg font-extrabold text-sky-600">0%</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mb-3">Persentase dihitung dari total pekerjaan berstatus Selesai.</p>
+                    <div class="w-full bg-slate-100 h-4 rounded-full overflow-hidden p-0.5 border border-slate-200">
+                        <div id="overall-progress-bar" class="bg-gradient-to-r from-sky-500 to-emerald-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Category Breakdown Bars -->
+                <div class="space-y-2 text-xs">
+                    <p class="font-semibold text-slate-700">Progres per Bidang:</p>
+                    <div id="category-progress-list" class="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visual Chart -->
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm lg:col-span-2 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div class="w-full sm:w-1/2 h-48 flex items-center justify-center">
+                    <canvas id="statusChart"></canvas>
+                </div>
+                <div class="w-full sm:w-1/2 space-y-3 text-xs">
+                    <h4 class="font-bold text-slate-800 text-sm border-b pb-2">Ringkasan Status Pekerjaan</h4>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-slate-600">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-slate-400"></span> Belum Mulai</span>
+                            <span id="chart-legend-notstarted" class="font-semibold">0</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-600">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-sky-500"></span> Dalam Proses</span>
+                            <span id="chart-legend-inprogress" class="font-semibold">0</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-600">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Selesai</span>
+                            <span id="chart-legend-completed" class="font-semibold">0</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-600">
+                            <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-rose-500"></span> Tertunda</span>
+                            <span id="chart-legend-delayed" class="font-semibold">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls & Filters Header -->
+        <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                
+                <!-- Category Tabs -->
+                <div class="flex items-center gap-1 overflow-x-auto pb-2 md:pb-0 custom-scrollbar text-xs">
+                    <button onclick="setCategoryFilter('ALL')" id="cat-tab-ALL" class="cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-sky-600 text-white shadow-sm">
+                        Semua Bidang
+                    </button>
+                    <button onclick="setCategoryFilter('A')" id="cat-tab-A" class="cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                        A. Administrasi
+                    </button>
+                    <button onclick="setCategoryFilter('B')" id="cat-tab-B" class="cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                        B. Narasumber
+                    </button>
+                    <button onclick="setCategoryFilter('C')" id="cat-tab-C" class="cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                        C. Tempat & Kontrak
+                    </button>
+                    <button onclick="setCategoryFilter('D')" id="cat-tab-D" class="cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                        D. Branding
+                    </button>
+                    <button onclick="setCategoryFilter('E')" id="cat-tab-E" class="cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                        E. Hari H
+                    </button>
+                    <button onclick="setCategoryFilter('F')" id="cat-tab-F" class="cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200">
+                        F. Tindak Lanjut
+                    </button>
+                </div>
+
+                <!-- Secondary Filters & Search -->
+                <div class="flex items-center gap-2">
+                    <div class="relative flex-1 md:w-60">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="search-input" oninput="renderTasks()" placeholder="Cari nama kegiatan / PIC..." class="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    </div>
+
+                    <select id="status-filter" onchange="renderTasks()" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        <option value="ALL">Semua Status</option>
+                        <option value="Belum Mulai">Belum Mulai</option>
+                        <option value="Dalam Proses">Dalam Proses</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="Tertunda">Tertunda</option>
+                    </select>
+
+                    <select id="pic-filter" onchange="renderTasks()" class="text-xs bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                        <option value="ALL">Semua PIC</option>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Tasks Table View -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100/80 border-b border-slate-200 text-slate-600 uppercase font-semibold">
+                            <th class="py-3 px-4 w-12 text-center">No</th>
+                            <th class="py-3 px-4 min-w-[220px]">Kegiatan / Pekerjaan</th>
+                            <th class="py-3 px-4 w-36">PIC</th>
+                            <th class="py-3 px-4 w-28">Deadline</th>
+                            <th class="py-3 px-4 w-32">Status</th>
+                            <th class="py-3 px-4 min-w-[140px]">Berkas Hasil / Drive</th>
+                            <th class="py-3 px-4 min-w-[160px]">Catatan</th>
+                            <th class="py-3 px-4 w-28 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="task-table-body" class="divide-y divide-slate-100">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div id="empty-state" class="hidden p-8 text-center text-slate-400">
+                <i class="fa-solid fa-folder-open text-4xl mb-2 text-slate-300"></i>
+                <p class="text-sm font-medium">Tidak ada kegiatan yang sesuai dengan filter.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Task Edit/Create Modal -->
+    <div id="modal-task" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="modal-task-title" class="text-base font-bold text-slate-800">Edit Task</h3>
+                <button onclick="closeTaskModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="task-form" onsubmit="saveTask(event)" class="space-y-3 text-xs">
+                <input type="hidden" id="form-task-id">
+                
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Bidang / Kategori</label>
+                    <select id="form-category" class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+                        <option value="A">A. Administrasi & Persuratan</option>
+                        <option value="B">B. Narasumber & Substansi</option>
+                        <option value="C">C. Tempat, Akomodasi & Kontrak</option>
+                        <option value="D">D. Perlengkapan & Branding</option>
+                        <option value="E">E. Pelaksanaan Hari H</option>
+                        <option value="F">F. Tindak Lanjut</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama Kegiatan / Pekerjaan</label>
+                    <input type="text" id="form-title" required class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Masukkan detail kegiatan...">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Penanggung Jawab (PIC)</label>
+                        <input type="text" id="form-pic" class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Contoh: Budi / Tim Subag">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Batas Waktu (Deadline)</label>
+                        <input type="date" id="form-deadline" class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Status Pekerjaan</label>
+                    <select id="form-status" class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+                        <option value="Belum Mulai">Belum Mulai</option>
+                        <option value="Dalam Proses">Dalam Proses</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="Tertunda">Tertunda</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Catatan Tambahan</label>
+                    <textarea id="form-notes" rows="3" class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none" placeholder="Tambahkan instruksi, tautan pendukung, atau catatan penting..."></textarea>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t">
+                    <button type="button" onclick="closeTaskModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-semibold shadow-sm">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- File Upload / Drive Link Modal -->
+    <div id="modal-upload" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-base font-bold text-slate-800"><i class="fa-solid fa-cloud-arrow-up text-emerald-600 mr-2"></i> Unggah Lampiran Hasil Tugas</h3>
+                <button onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-4 text-xs">
+                <input type="hidden" id="upload-task-id">
+                <input type="hidden" id="upload-task-category">
+                
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <span class="text-slate-400 text-[10px] block font-bold uppercase">Kegiatan / Pekerjaan</span>
+                    <span id="upload-task-title" class="font-semibold text-slate-800 text-sm"></span>
+                </div>
+
+                <!-- Step 1: Upload / Choose File directly -->
+                <div class="space-y-1.5">
+                    <label class="block font-semibold text-slate-700">1. Pilih File Dokumen dari Perangkat</label>
+                    <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/50 rounded-xl p-4 text-center hover:bg-emerald-50 transition cursor-pointer" onclick="document.getElementById('upload-file-input').click()">
+                        <i class="fa-solid fa-file-arrow-up text-3xl text-emerald-600 mb-2"></i>
+                        <p class="font-medium text-slate-700 text-xs">Klik di sini untuk memilih file</p>
+                        <p id="selected-filename-display" class="text-[11px] text-emerald-700 font-bold mt-1">Belum ada file dipilih</p>
+                        <input type="file" id="upload-file-input" class="hidden" onchange="handleFileSelection(event)">
+                    </div>
+                </div>
+
+                <!-- Step 2: Auto-directed Category Drive Folder -->
+                <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
+                    <div>
+                        <span id="upload-category-folder-name" class="font-bold text-slate-800 block text-xs">Folder Drive Bidang</span>
+                        <span class="text-[10px] text-slate-500">File akan disimpan ke folder Drive bidang ini</span>
+                    </div>
+                    <button type="button" onclick="openCategoryDriveFolder()" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 text-xs shadow-sm whitespace-nowrap flex items-center gap-1.5">
+                        <i class="fa-brands fa-google-drive text-sm"></i> Buka Folder Drive
+                    </button>
+                </div>
+
+                <!-- Optional Note -->
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Catatan Tambahan (Opsional)</label>
+                    <input type="text" id="upload-filename-custom" placeholder="Nama dokumen / penjelasan ringkas..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t">
+                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium">Batal</button>
+                    <button type="button" onclick="saveUpload()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm">Simpan & Mark Selesai</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Drive Configuration Modal (Leader Only) -->
+    <div id="modal-drive-config" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-base font-bold text-slate-800"><i class="fa-brands fa-google-drive text-emerald-600 mr-2"></i> Atur Link Drive Sub-Folder per Bidang</h3>
+                <button onclick="closeDriveConfigModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <p class="text-xs text-slate-500">Masukkan link URL sub-folder Google Drive untuk setiap bidang agar tim langsung diarahkan ke folder yang tepat saat mengunggah tugas.</p>
+            <form onsubmit="saveCategoryDriveLinks(event)" class="space-y-3 text-xs max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">A. Administrasi & Persuratan</label>
+                    <input type="url" id="drive-url-A" placeholder="https://drive.google.com/drive/folders/..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">B. Narasumber & Substansi</label>
+                    <input type="url" id="drive-url-B" placeholder="https://drive.google.com/drive/folders/..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">C. Tempat, Akomodasi & Kontrak</label>
+                    <input type="url" id="drive-url-C" placeholder="https://drive.google.com/drive/folders/..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">D. Perlengkapan & Branding</label>
+                    <input type="url" id="drive-url-D" placeholder="https://drive.google.com/drive/folders/..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">E. Pelaksanaan Hari H</label>
+                    <input type="url" id="drive-url-E" placeholder="https://drive.google.com/drive/folders/..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">F. Tindak Lanjut</label>
+                    <input type="url" id="drive-url-F" placeholder="https://drive.google.com/drive/folders/..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+                <div class="flex justify-end gap-2 pt-3 border-t">
+                    <button type="button" onclick="closeDriveConfigModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium">Batal</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm">Simpan Link Drive</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-800 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 text-xs transform transition-all duration-300 translate-y-20 opacity-0">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toast-message">Pesan notifikasi</span>
+    </div>
+
+    <!-- Core JavaScript Application Logic -->
+    <script>
+        const DEFAULT_CATEGORY_DRIVE_URLS = {
+            'A': 'https://drive.google.com/drive/folders/1j2j0r6J7F-0wk7BP2eBurTc5Mw-CMw9U?usp=drive_link',
+            'B': 'https://drive.google.com/drive/folders/1sbRocNtBDjfEnHHHY5hFpAhT1GulwND0?usp=drive_link',
+            'C': 'https://drive.google.com/drive/folders/1WeRsVbWwhFyRBJqNa0wyD3NFBG7gO3Zb?usp=drive_link',
+            'D': 'https://drive.google.com/drive/folders/1-RuaaLQwsDn32DXx-r4zfA4YjeYu74Li?usp=drive_link',
+            'E': 'https://drive.google.com/drive/folders/1wjfAObkQARYuk5iOVkRLM1kbIfE8rNC7?usp=drive_link',
+            'F': 'https://drive.google.com/drive/folders/1FN9822_21CG2YxiJxS_2M_e5Ct5FkC3z?usp=drive_link'
+        };
+
+        const savedUrls = JSON.parse(localStorage.getItem('berakhlak_category_drive_urls')) || {};
+        window.categoryDriveUrls = { ...DEFAULT_CATEGORY_DRIVE_URLS, ...savedUrls };
+        window.tasks = [];
+        window.currentRole = 'leader';
+        window.selectedCategory = 'ALL';
+        window.statusChart = null;
+
+        window.initChart = function() {
+            const ctx = document.getElementById('statusChart');
+            if (!ctx) return;
+            
+            if (window.statusChart) {
+                window.statusChart.destroy();
+            }
+
+            window.statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Belum Mulai', 'Dalam Proses', 'Selesai', 'Tertunda'],
+                    datasets: [{
+                        data: [0, 0, 0, 0],
+                        backgroundColor: ['#94a3b8', '#3b82f6', '#10b981', '#f43f5e'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    cutout: '70%'
+                }
+            });
+        };
+
+        window.updateMetrics = function() {
+            const tasks = window.tasks || [];
+            const total = tasks.length;
+            
+            let notStarted = 0, inProgress = 0, completed = 0, delayed = 0;
+            
+            tasks.forEach(t => {
+                if (t.status === 'Belum Mulai') notStarted++;
+                else if (t.status === 'Dalam Proses') inProgress++;
+                else if (t.status === 'Selesai') completed++;
+                else if (t.status === 'Tertunda') delayed++;
+            });
+
+            const getPct = (val) => total > 0 ? Math.round((val / total) * 100) : 0;
+
+            document.getElementById('metric-total').textContent = total;
+            document.getElementById('metric-notstarted').textContent = notStarted;
+            document.getElementById('metric-notstarted-pct').textContent = getPct(notStarted) + '%';
+            
+            document.getElementById('metric-inprogress').textContent = inProgress;
+            document.getElementById('metric-inprogress-pct').textContent = getPct(inProgress) + '%';
+            
+            document.getElementById('metric-completed').textContent = completed;
+            document.getElementById('metric-completed-pct').textContent = getPct(completed) + '%';
+            
+            document.getElementById('metric-delayed').textContent = delayed;
+            document.getElementById('metric-delayed-pct').textContent = getPct(delayed) + '%';
+
+            const overallPct = getPct(completed);
+            document.getElementById('overall-percent').textContent = overallPct + '%';
+            document.getElementById('overall-progress-bar').style.width = overallPct + '%';
+
+            if (window.statusChart) {
+                window.statusChart.data.datasets[0].data = [notStarted, inProgress, completed, delayed];
+                window.statusChart.update();
+            }
+            
+            document.getElementById('chart-legend-notstarted').textContent = notStarted;
+            document.getElementById('chart-legend-inprogress').textContent = inProgress;
+            document.getElementById('chart-legend-completed').textContent = completed;
+            document.getElementById('chart-legend-delayed').textContent = delayed;
+
+            window.renderCategoryBreakdown();
+        };
+
+        window.renderCategoryBreakdown = function() {
+            const listEl = document.getElementById('category-progress-list');
+            if (!listEl) return;
+            
+            const categories = [
+                { code: 'A', name: 'A. Administrasi & Persuratan' },
+                { code: 'B', name: 'B. Narasumber & Substansi' },
+                { code: 'C', name: 'C. Tempat & Kontrak' },
+                { code: 'D', name: 'D. Perlengkapan & Branding' },
+                { code: 'E', name: 'E. Pelaksanaan Hari H' },
+                { code: 'F', name: 'F. Tindak Lanjut' }
+            ];
+
+            const tasks = window.tasks || [];
+            listEl.innerHTML = '';
+
+            categories.forEach(cat => {
+                const catTasks = tasks.filter(t => t.category === cat.code);
+                const catTotal = catTasks.length;
+                const catDone = catTasks.filter(t => t.status === 'Selesai').length;
+                const pct = catTotal > 0 ? Math.round((catDone / catTotal) * 100) : 0;
+
+                const div = document.createElement('div');
+                div.className = 'space-y-1';
+                div.innerHTML = `
+                    <div class="flex justify-between items-center text-[11px]">
+                        <span class="text-slate-600 font-medium">${cat.name}</span>
+                        <span class="font-bold text-slate-700">${catDone}/${catTotal} (${pct}%)</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div class="bg-sky-500 h-full rounded-full transition-all duration-300" style="width: ${pct}%"></div>
+                    </div>
+                `;
+                listEl.appendChild(div);
+            });
+        };
+
+        window.renderTasks = function() {
+            const tbody = document.getElementById('task-table-body');
+            const emptyState = document.getElementById('empty-state');
+            if (!tbody) return;
+
+            const tasks = window.tasks || [];
+            const searchVal = (document.getElementById('search-input')?.value || '').toLowerCase();
+            const statusVal = document.getElementById('status-filter')?.value || 'ALL';
+            const picVal = document.getElementById('pic-filter')?.value || 'ALL';
+            const catVal = window.selectedCategory || 'ALL';
+
+            const filtered = tasks.filter(t => {
+                if (catVal !== 'ALL' && t.category !== catVal) return false;
+                if (statusVal !== 'ALL' && t.status !== statusVal) return false;
+                if (picVal !== 'ALL' && t.pic !== picVal) return false;
+                if (searchVal) {
+                    const matchTitle = (t.title || '').toLowerCase().includes(searchVal);
+                    const matchPic = (t.pic || '').toLowerCase().includes(searchVal);
+                    const matchNotes = (t.notes || '').toLowerCase().includes(searchVal);
+                    if (!matchTitle && !matchPic && !matchNotes) return false;
+                }
+                return true;
+            });
+
+            tbody.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState?.classList.remove('hidden');
+                return;
+            } else {
+                emptyState?.classList.add('hidden');
+            }
+
+            filtered.forEach((t, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100 text-xs';
+
+                let statusBadgeClass = 'bg-slate-100 text-slate-700';
+                if (t.status === 'Belum Mulai') statusBadgeClass = 'bg-slate-100 text-slate-600 border border-slate-200';
+                else if (t.status === 'Dalam Proses') statusBadgeClass = 'bg-blue-50 text-blue-700 border border-blue-200';
+                else if (t.status === 'Selesai') statusBadgeClass = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+                else if (t.status === 'Tertunda') statusBadgeClass = 'bg-rose-50 text-rose-700 border border-rose-200';
+
+                let fileCell = '<span class="text-slate-400 italic text-[11px]">Belum ada berkas</span>';
+                if (t.fileName) {
+                    const driveUrl = t.fileUrl || window.categoryDriveUrls[t.category] || 'https://drive.google.com';
+                    fileCell = `
+                        <a href="${driveUrl}" target="_blank" class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 font-medium hover:bg-emerald-100 transition border border-emerald-200 text-[11px]">
+                            <i class="fa-brands fa-google-drive text-emerald-600"></i>
+                            <span class="truncate max-w-[120px]">${t.fileName}</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-70"></i>
+                        </a>
+                    `;
+                }
+
+                const isLeader = window.currentRole === 'leader';
+
+                let actionButtons = `
+                    <div class="flex items-center justify-center gap-1">
+                        <button onclick="openUploadModal('${t.id}')" title="Unggah / Lampirkan Berkas" class="p-1.5 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200 transition">
+                            <i class="fa-solid fa-paperclip text-xs"></i>
+                        </button>
+                `;
+
+                if (isLeader) {
+                    actionButtons += `
+                        <button onclick="openTaskModal('${t.id}')" title="Edit Tugas" class="p-1.5 rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-100 border border-sky-200 transition">
+                            <i class="fa-solid fa-pen-to-square text-xs"></i>
+                        </button>
+                        <button onclick="deleteTask('${t.id}')" title="Hapus Tugas" class="p-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 transition">
+                            <i class="fa-solid fa-trash text-xs"></i>
+                        </button>
+                    `;
+                }
+
+                actionButtons += `</div>`;
+
+                const statusSelectHTML = `
+                    <select onchange="quickUpdateTask('${t.id}', 'status', this.value)" class="text-[11px] font-semibold rounded-lg px-2 py-1 outline-none ${statusBadgeClass} cursor-pointer">
+                        <option value="Belum Mulai" ${t.status === 'Belum Mulai' ? 'selected' : ''}>Belum Mulai</option>
+                        <option value="Dalam Proses" ${t.status === 'Dalam Proses' ? 'selected' : ''}>Dalam Proses</option>
+                        <option value="Selesai" ${t.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                        <option value="Tertunda" ${t.status === 'Tertunda' ? 'selected' : ''}>Tertunda</option>
+                    </select>
+                `;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-center font-bold text-slate-500">${t.category}${t.code || (idx + 1)}</td>
+                    <td class="py-3 px-4 font-semibold text-slate-800">
+                        ${t.title}
+                        <span class="block text-[10px] text-slate-400 font-normal">Bidang ${t.category}</span>
+                    </td>
+                    <td class="py-3 px-4">
+                        ${isLeader ? `
+                            <input type="text" value="${t.pic || ''}" placeholder="Isi PIC..." onblur="quickUpdateTask('${t.id}', 'pic', this.value)" class="w-full bg-transparent border-b border-dashed border-slate-300 focus:border-sky-500 text-xs py-0.5 outline-none font-medium text-slate-700 placeholder:text-slate-300">
+                        ` : `
+                            <span class="font-medium text-slate-700">${t.pic || '<span class="text-slate-300 italic">Belum ada</span>'}</span>
+                        `}
+                    </td>
+                    <td class="py-3 px-4 font-medium text-slate-600">
+                        ${isLeader ? `
+                            <input type="date" value="${t.deadline || ''}" onchange="quickUpdateTask('${t.id}', 'deadline', this.value)" class="bg-transparent text-xs outline-none text-slate-600">
+                        ` : `
+                            <span>${t.deadline || '-'}</span>
+                        `}
+                    </td>
+                    <td class="py-3 px-4">${statusSelectHTML}</td>
+                    <td class="py-3 px-4">${fileCell}</td>
+                    <td class="py-3 px-4 text-slate-500 max-w-[180px] truncate" title="${t.notes || ''}">
+                        ${t.notes || '<span class="text-slate-300 italic">-</span>'}
+                    </td>
+                    <td class="py-3 px-4 text-center">${actionButtons}</td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        };
+
+        window.openDriveFolder = function(category = null) {
+            let url = DEFAULT_CATEGORY_DRIVE_URLS['A'];
+            if (category && window.categoryDriveUrls && window.categoryDriveUrls[category]) {
+                url = window.categoryDriveUrls[category];
+            }
+            window.open(url, '_blank');
+        };
+
+        window.openCategoryDriveFolder = function() {
+            const category = document.getElementById('upload-task-category').value;
+            openDriveFolder(category);
+        };
+
+        window.switchRole = function(role) {
+            window.currentRole = role;
+            const btnLeader = document.getElementById('btn-role-leader');
+            const btnTeam = document.getElementById('btn-role-team');
+            const bannerTitle = document.getElementById('role-banner-title');
+            const bannerDesc = document.getElementById('role-banner-desc');
+            const bannerIcon = document.getElementById('role-banner-icon');
+            const btnAddTask = document.getElementById('btn-add-task');
+
+            if (role === 'leader') {
+                btnLeader.className = "px-3 py-1 rounded-lg text-xs font-semibold transition-all bg-sky-600 text-white shadow";
+                btnTeam.className = "px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all";
+                bannerTitle.textContent = "Selamat Datang, Leader Panitia!";
+                bannerDesc.textContent = "Anda dapat membagi PIC tugas, menentukan deadline, serta memantau seluruh progres kegiatan secara real-time.";
+                bannerIcon.className = "fa-solid fa-user-shield";
+                btnAddTask?.classList.remove('hidden');
+            } else {
+                btnTeam.className = "px-3 py-1 rounded-lg text-xs font-semibold transition-all bg-sky-600 text-white shadow";
+                btnLeader.className = "px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all";
+                bannerTitle.textContent = "Selamat Datang, Tim Pelaksana!";
+                bannerDesc.textContent = "Silakan periksa tugas yang menjadi tanggung jawab Anda, perbarui status progress, dan unggah berkas hasil pengerjaan.";
+                bannerIcon.className = "fa-solid fa-users";
+                btnAddTask?.classList.add('hidden');
+            }
+
+            renderTasks();
+        };
+
+        window.setCategoryFilter = function(catCode) {
+            window.selectedCategory = catCode;
+            document.querySelectorAll('.cat-tab').forEach(btn => {
+                btn.className = "cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+            });
+            const activeTab = document.getElementById(`cat-tab-${catCode}`);
+            if (activeTab) {
+                activeTab.className = "cat-tab px-3 py-1.5 rounded-xl font-medium whitespace-nowrap bg-sky-600 text-white shadow-sm transition";
+            }
+            renderTasks();
+        };
+
+        window.openTaskModal = function(id = null) {
+            const modal = document.getElementById('modal-task');
+            const titleEl = document.getElementById('modal-task-title');
+            const form = document.getElementById('task-form');
+
+            if (id) {
+                const task = window.tasks.find(t => t.id === id);
+                if (!task) return;
+                titleEl.textContent = "Edit Detail Kegiatan";
+                document.getElementById('form-task-id').value = task.id;
+                document.getElementById('form-category').value = task.category;
+                document.getElementById('form-title').value = task.title;
+                document.getElementById('form-pic').value = task.pic || '';
+                document.getElementById('form-deadline').value = task.deadline || '';
+                document.getElementById('form-status').value = task.status || 'Belum Mulai';
+                document.getElementById('form-notes').value = task.notes || '';
+            } else {
+                titleEl.textContent = "Tambah Kegiatan Baru";
+                form.reset();
+                document.getElementById('form-task-id').value = '';
+            }
+
+            modal.classList.remove('hidden');
+        };
+
+        window.closeTaskModal = function() {
+            document.getElementById('modal-task').classList.add('hidden');
+        };
+
+        window.saveTask = async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('form-task-id').value;
+            const category = document.getElementById('form-category').value;
+            const title = document.getElementById('form-title').value;
+            const pic = document.getElementById('form-pic').value;
+            const deadline = document.getElementById('form-deadline').value;
+            const status = document.getElementById('form-status').value;
+            const notes = document.getElementById('form-notes').value;
+
+            const catNames = {
+                'A': 'Administrasi & Persuratan',
+                'B': 'Narasumber & Substansi',
+                'C': 'Tempat, Akomodasi & Kontrak',
+                'D': 'Perlengkapan & Branding',
+                'E': 'Pelaksanaan Hari H',
+                'F': 'Tindak Lanjut'
+            };
+
+            if (id) {
+                const task = window.tasks.find(t => t.id === id);
+                if (task) {
+                    task.category = category;
+                    task.categoryName = catNames[category];
+                    task.title = title;
+                    task.pic = pic;
+                    task.deadline = deadline;
+                    task.status = status;
+                    task.notes = notes;
+
+                    try {
+                        if (window.db && window.TASKS_COLLECTION_PATH) {
+                            const docRef = window.doc(window.db, ...window.TASKS_COLLECTION_PATH, id);
+                            await window.updateDoc(docRef, { category, categoryName: catNames[category], title, pic, deadline, status, notes });
+                        }
+                    } catch (err) { console.warn(err); }
+                }
+            } else {
+                const newId = category + (Date.now() % 10000);
+                const newTask = {
+                    id: newId,
+                    category,
+                    categoryName: catNames[category],
+                    code: 99,
+                    title,
+                    pic,
+                    deadline,
+                    status,
+                    notes
+                };
+                window.tasks.push(newTask);
+
+                try {
+                    if (window.db && window.TASKS_COLLECTION_PATH) {
+                        const docRef = window.doc(window.db, ...window.TASKS_COLLECTION_PATH, newId);
+                        await window.setDoc(docRef, newTask);
+                    }
+                } catch (err) { console.warn(err); }
+            }
+
+            renderTasks();
+            updateMetrics();
+            populatePicOptions();
+            closeTaskModal();
+            showToast("Tugas berhasil disimpan!", "success");
+        };
+
+        window.quickUpdateTask = async function(id, field, value) {
+            const task = window.tasks.find(t => t.id === id);
+            if (!task) return;
+
+            task[field] = value;
+            renderTasks();
+            updateMetrics();
+
+            try {
+                if (window.db && window.TASKS_COLLECTION_PATH) {
+                    const docRef = window.doc(window.db, ...window.TASKS_COLLECTION_PATH, id);
+                    await window.updateDoc(docRef, { [field]: value });
+                }
+            } catch (e) {
+                console.warn("Firestore sync skipped:", e);
+            }
+        };
+
+        window.deleteTask = async function(id) {
+            if (!confirm("Apakah Anda yakin ingin menghapus kegiatan ini?")) return;
+
+            window.tasks = window.tasks.filter(t => t.id !== id);
+            renderTasks();
+            updateMetrics();
+
+            try {
+                if (window.db && window.TASKS_COLLECTION_PATH) {
+                    const docRef = window.doc(window.db, ...window.TASKS_COLLECTION_PATH, id);
+                    await window.deleteDoc(docRef);
+                    showToast("Kegiatan berhasil dihapus", "info");
+                }
+            } catch (e) {
+                console.warn("Firestore delete skipped:", e);
+            }
+        };
+
+        window.handleFileSelection = function(e) {
+            const file = e.target.files[0];
+            const display = document.getElementById('selected-filename-display');
+            const customInput = document.getElementById('upload-filename-custom');
+            
+            if (file) {
+                display.textContent = `📄 ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+                if (!customInput.value) {
+                    customInput.value = file.name;
+                }
+            } else {
+                display.textContent = 'Belum ada file dipilih';
+            }
+        };
+
+        window.openUploadModal = function(id) {
+            const task = window.tasks.find(t => t.id === id);
+            if (!task) return;
+
+            const categoryNames = {
+                'A': 'Bidang A: Administrasi & Persuratan',
+                'B': 'Bidang B: Narasumber & Substansi',
+                'C': 'Bidang C: Tempat & Kontrak',
+                'D': 'Bidang D: Perlengkapan & Branding',
+                'E': 'Bidang E: Pelaksanaan Hari H',
+                'F': 'Bidang F: Tindak Lanjut'
+            };
+
+            document.getElementById('upload-task-id').value = task.id;
+            document.getElementById('upload-task-category').value = task.category;
+            document.getElementById('upload-task-title').textContent = task.title;
+            document.getElementById('upload-filename-custom').value = task.fileName || '';
+            document.getElementById('upload-file-input').value = '';
+            document.getElementById('selected-filename-display').textContent = task.fileName ? `📄 File saat ini: ${task.fileName}` : 'Belum ada file dipilih';
+            
+            const catName = categoryNames[task.category] || `Bidang ${task.category}`;
+            document.getElementById('upload-category-folder-name').textContent = catName;
+
+            document.getElementById('modal-upload').classList.remove('hidden');
+        };
+
+        window.closeUploadModal = function() {
+            document.getElementById('modal-upload').classList.add('hidden');
+        };
+
+        window.saveUpload = async function() {
+            const id = document.getElementById('upload-task-id').value;
+            const category = document.getElementById('upload-task-category').value;
+            const fileInput = document.getElementById('upload-file-input');
+            const customName = document.getElementById('upload-filename-custom').value;
+
+            if (!id) return;
+
+            let fileName = 'Dokumen_Selesai.pdf';
+            if (fileInput.files && fileInput.files[0]) {
+                fileName = fileInput.files[0].name;
+            } else if (customName.trim() !== '') {
+                fileName = customName.trim();
+            }
+
+            const folderUrl = window.categoryDriveUrls[category] || DEFAULT_CATEGORY_DRIVE_URLS[category] || DEFAULT_CATEGORY_DRIVE_URLS['A'];
+
+            await quickUpdateTask(id, 'fileName', fileName);
+            await quickUpdateTask(id, 'fileUrl', folderUrl);
+            await quickUpdateTask(id, 'status', 'Selesai');
+
+            showToast(`File "${fileName}" berhasil ditautkan ke Bidang ${category}!`, "success");
+            closeUploadModal();
+        };
+
+        window.openDriveConfigModal = function() {
+            const modal = document.getElementById('modal-drive-config');
+            const cats = ['A', 'B', 'C', 'D', 'E', 'F'];
+            cats.forEach(c => {
+                const input = document.getElementById(`drive-url-${c}`);
+                if (input) {
+                    input.value = window.categoryDriveUrls[c] || DEFAULT_CATEGORY_DRIVE_URLS[c] || '';
+                }
+            });
+            modal.classList.remove('hidden');
+        };
+
+        window.closeDriveConfigModal = function() {
+            document.getElementById('modal-drive-config').classList.add('hidden');
+        };
+
+        window.saveCategoryDriveLinks = function(e) {
+            e.preventDefault();
+            const cats = ['A', 'B', 'C', 'D', 'E', 'F'];
+            cats.forEach(c => {
+                const val = document.getElementById(`drive-url-${c}`).value.trim();
+                if (val) {
+                    window.categoryDriveUrls[c] = val;
+                }
+            });
+            localStorage.setItem('berakhlak_category_drive_urls', JSON.stringify(window.categoryDriveUrls));
+            closeDriveConfigModal();
+            showToast("Tautan Google Drive per bidang berhasil diperbarui!", "success");
+            renderTasks();
+        };
+
+        window.populatePicOptions = function() {
+            const select = document.getElementById('pic-filter');
+            if (!select) return;
+
+            const currentVal = select.value;
+            const pics = new Set();
+            (window.tasks || []).forEach(t => {
+                if (t.pic && t.pic.trim() !== '') pics.add(t.pic.trim());
+            });
+
+            select.innerHTML = '<option value="ALL">Semua PIC</option>';
+            pics.forEach(pic => {
+                const opt = document.createElement('option');
+                opt.value = pic;
+                opt.textContent = pic;
+                if (pic === currentVal) opt.selected = true;
+                select.appendChild(opt);
+            });
+        };
+
+        window.showToast = function(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.textContent = message;
+            if (type === 'success') {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400 text-base";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-info text-sky-400 text-base";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        };
+    </script>
+
+    <!-- Firebase Script Initialization -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'berakhlak-2026';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {
+            apiKey: "demo-key",
+            authDomain: "demo.firebaseapp.com",
+            projectId: "demo-project",
+            storageBucket: "demo.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:demo"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        window.db = db;
+        window.appId = appId;
+        window.auth = auth;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.updateDoc = updateDoc;
+        window.deleteDoc = deleteDoc;
+
+        const TASKS_COLLECTION_PATH = ['artifacts', appId, 'public', 'data', 'berakhlak_checklist_2026'];
+        window.TASKS_COLLECTION_PATH = TASKS_COLLECTION_PATH;
+
+        const INITIAL_CHECKLIST_DATA = [
+            // A. ADMINISTRASI & PERSURATAN
+            { id: "A1", category: "A", categoryName: "Administrasi & Persuratan", code: 1, title: "SK/Surat Penetapan Narasumber ACT Consulting", pic: "", deadline: "2026-08-25", status: "Belum Mulai", notes: "" },
+            { id: "A2", category: "A", categoryName: "Administrasi & Persuratan", code: 2, title: "Surat Permohonan Narasumber kepada ACT Consulting", pic: "", deadline: "2026-08-25", status: "Belum Mulai", notes: "" },
+            { id: "A3", category: "A", categoryName: "Administrasi & Persuratan", code: 3, title: "Surat Undangan Tim Implementasi BerAKHLAK Perangkat Daerah", pic: "", deadline: "2026-08-26", status: "Belum Mulai", notes: "" },
+            { id: "A4", category: "A", categoryName: "Administrasi & Persuratan", code: 4, title: "Surat Undangan Bagian Organisasi Kabupaten/Kota", pic: "", deadline: "2026-08-26", status: "Belum Mulai", notes: "" },
+            { id: "A5", category: "A", categoryName: "Administrasi & Persuratan", code: 5, title: "Surat Undangan Pegawai Biro Organisasi", pic: "", deadline: "2026-08-27", status: "Belum Mulai", notes: "" },
+            { id: "A6", category: "A", categoryName: "Administrasi & Persuratan", code: 6, title: "Surat Membuka Acara", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
+            { id: "A7", category: "A", categoryName: "Administrasi & Persuratan", code: 7, title: "Surat Tugas/Penugasan Panitia", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
+            { id: "A8", category: "A", categoryName: "Administrasi & Persuratan", code: 8, title: "Finalisasi daftar/nama peserta (90 orang)", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
+            { id: "A9", category: "A", categoryName: "Administrasi & Persuratan", code: 9, title: "Daftar hadir peserta", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
+            { id: "A10", category: "A", categoryName: "Administrasi & Persuratan", code: 10, title: "Sertifikat peserta dan narasumber", pic: "", deadline: "2026-08-31", status: "Belum Mulai", notes: "" },
+            { id: "A11", category: "A", categoryName: "Administrasi & Persuratan", code: 11, title: "Surat perjalanan dinas", pic: "", deadline: "2026-08-31", status: "Belum Mulai", notes: "" },
+            { id: "A12", category: "A", categoryName: "Administrasi & Persuratan", code: 12, title: "Dokumentasi administrasi kegiatan", pic: "", deadline: "2026-09-01", status: "Belum Mulai", notes: "" },
+
+            // B. NARASUMBER & SUBSTANSI
+            { id: "B1", category: "B", categoryName: "Narasumber & Substansi", code: 1, title: "Konfirmasi kesediaan 2 narasumber ACT Consulting", pic: "", deadline: "2026-08-25", status: "Belum Mulai", notes: "" },
+            { id: "B2", category: "B", categoryName: "Narasumber & Substansi", code: 2, title: "Finalisasi materi dengan narasumber", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
+            { id: "B3", category: "B", categoryName: "Narasumber & Substansi", code: 3, title: "Brief/TOR untuk narasumber", pic: "", deadline: "2026-08-26", status: "Belum Mulai", notes: "" },
+            { id: "B4", category: "B", categoryName: "Narasumber & Substansi", code: 4, title: "Rundown/susunan acara 2 hari", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
+            { id: "B5", category: "B", categoryName: "Narasumber & Substansi", code: 5, title: "Penetapan MC", pic: "", deadline: "2026-08-27", status: "Belum Mulai", notes: "" },
+            { id: "B6", category: "B", categoryName: "Narasumber & Substansi", code: 6, title: "Instrumen evaluasi kegiatan", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
+
+            // C. TEMPAT, AKOMODASI & KONTRAK
+            { id: "C1", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 1, title: "Booking Hotel Luminor Tanjung Selor", pic: "", deadline: "2026-08-24", status: "Belum Mulai", notes: "" },
+            { id: "C2", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 2, title: "Finalisasi kebutuhan ruang kegiatan", pic: "", deadline: "2026-08-27", status: "Belum Mulai", notes: "" },
+            { id: "C3", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 3, title: "Finalisasi jumlah peserta dan panitia", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
+            { id: "C4", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 4, title: "Konfirmasi kebutuhan kamar", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
+            { id: "C5", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 5, title: "Konfirmasi konsumsi (coffee break, makan, dll.)", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
+            { id: "C6", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 6, title: "Konfirmasi fasilitas meeting", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
+            { id: "C7", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 7, title: "Konfirmasi sound system, LCD/proyektor, microphone", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
+            { id: "C8", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 8, title: "Kontrak kegiatan dengan hotel", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
+            { id: "C9", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 9, title: "Kontrak/administrasi dengan ACT Consulting", pic: "", deadline: "2026-08-29", status: "Belum Mulai", notes: "" },
+            { id: "C10", category: "C", categoryName: "Tempat, Akomodasi & Kontrak", code: 10, title: "Konfirmasi dokumen dan mekanisme pembayaran", pic: "", deadline: "2026-08-31", status: "Belum Mulai", notes: "" },
+
+            // D. PERLENGKAPAN & BRANDING
+            { id: "D1", category: "D", categoryName: "Perlengkapan & Branding", code: 1, title: "Desain dan cetak spanduk/backdrop", pic: "", deadline: "2026-08-28", status: "Belum Mulai", notes: "" },
+            { id: "D2", category: "D", categoryName: "Perlengkapan & Branding", code: 2, title: "Sertifikat cetak/digital", pic: "", deadline: "2026-08-30", status: "Belum Mulai", notes: "" },
+            { id: "D3", category: "D", categoryName: "Perlengkapan & Branding", code: 3, title: "Dokumentasi foto/video panitia & tim media", pic: "", deadline: "2026-08-31", status: "Belum Mulai", notes: "" },
+            { id: "D4", category: "D", categoryName: "Perlengkapan & Branding", code: 4, title: "Pengecekan seluruh perlengkapan teknis", pic: "", deadline: "2026-09-01", status: "Belum Mulai", notes: "" },
+
+            // E. PELAKSANAAN HARI H
+            { id: "E1", category: "E", categoryName: "Pelaksanaan Hari H", code: 1, title: "Registrasi peserta", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
+            { id: "E2", category: "E", categoryName: "Pelaksanaan Hari H", code: 2, title: "Daftar hadir", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
+            { id: "E3", category: "E", categoryName: "Pelaksanaan Hari H", code: 3, title: "Pengecekan ruangan", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
+            { id: "E4", category: "E", categoryName: "Pelaksanaan Hari H", code: 4, title: "Pengecekan audio, microphone, LCD, laptop, dan koneksi", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
+            { id: "E5", category: "E", categoryName: "Pelaksanaan Hari H", code: 5, title: "Penyambutan dan pendampingan narasumber", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
+            { id: "E6", category: "E", categoryName: "Pelaksanaan Hari H", code: 6, title: "MC dan moderator siap", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
+            { id: "E7", category: "E", categoryName: "Pelaksanaan Hari H", code: 7, title: "Dokumentasi kegiatan", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
+            { id: "E8", category: "E", categoryName: "Pelaksanaan Hari H", code: 8, title: "Pengaturan konsumsi", pic: "", deadline: "2026-09-02", status: "Belum Mulai", notes: "" },
+            { id: "E9", category: "E", categoryName: "Pelaksanaan Hari H", code: 9, title: "Evaluasi peserta", pic: "", deadline: "2026-09-03", status: "Belum Mulai", notes: "" },
+
+            // F. TINDAK LANJUT
+            { id: "F1", category: "F", categoryName: "Tindak Lanjut", code: 1, title: "Rekap hasil evaluasi", pic: "", deadline: "2026-09-04", status: "Belum Mulai", notes: "" },
+            { id: "F2", category: "F", categoryName: "Tindak Lanjut", code: 2, title: "Dokumentasi dan publikasi kegiatan", pic: "", deadline: "2026-09-05", status: "Belum Mulai", notes: "" },
+            { id: "F3", category: "F", categoryName: "Tindak Lanjut", code: 3, title: "Penyusunan laporan pelaksanaan kegiatan", pic: "", deadline: "2026-09-07", status: "Belum Mulai", notes: "" },
+            { id: "F4", category: "F", categoryName: "Tindak Lanjut", code: 4, title: "Dokumentasi pertanggungjawaban administrasi dan keuangan", pic: "", deadline: "2026-09-10", status: "Belum Mulai", notes: "" },
+            { id: "F5", category: "F", categoryName: "Tindak Lanjut", code: 5, title: "Rencana monitoring tindak lanjut Action Plan", pic: "", deadline: "2026-09-12", status: "Belum Mulai", notes: "" }
+        ];
+
+        async function initApp() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                updateSyncStatus('connected');
+                subscribeToTasks();
+            } catch (err) {
+                console.error("Auth initialization fallback:", err);
+                updateSyncStatus('offline');
+                if (window.tasks.length === 0) {
+                    window.tasks = [...INITIAL_CHECKLIST_DATA];
+                    window.renderTasks();
+                    window.updateMetrics();
+                    window.populatePicOptions();
+                }
+            }
+        }
+
+        function subscribeToTasks() {
+            const colRef = collection(db, ...TASKS_COLLECTION_PATH);
+            onSnapshot(colRef, (snapshot) => {
+                if (snapshot.empty) {
+                    seedInitialData();
+                    return;
+                }
+
+                const loaded = [];
+                snapshot.forEach(docSnap => {
+                    loaded.push({ id: docSnap.id, ...docSnap.data() });
+                });
+
+                loaded.sort((a, b) => {
+                    if (a.category !== b.category) return a.category.localeCompare(b.category);
+                    return (a.code || 0) - (b.code || 0);
+                });
+
+                window.tasks = loaded;
+                window.renderTasks();
+                window.updateMetrics();
+                window.populatePicOptions();
+                updateSyncStatus('connected');
+            }, (error) => {
+                console.error("Firestore listener error:", error);
+                updateSyncStatus('offline');
+                if (window.tasks.length === 0) {
+                    window.tasks = [...INITIAL_CHECKLIST_DATA];
+                    window.renderTasks();
+                    window.updateMetrics();
+                    window.populatePicOptions();
+                }
+            });
+        }
+
+        async function seedInitialData() {
+            try {
+                for (const item of INITIAL_CHECKLIST_DATA) {
+                    const docRef = doc(db, ...TASKS_COLLECTION_PATH, item.id);
+                    await setDoc(docRef, item);
+                }
+                window.showToast("Checklist awal berhasil dipasang!", "success");
+            } catch (err) {
+                console.error("Error seeding initial data:", err);
+            }
+        }
+
+        window.reseedDatabase = async function() {
+            if (confirm("Reset ulang seluruh checklist ke data awal? Perubahan saat ini akan tertimpa.")) {
+                await seedInitialData();
+            }
+        };
+
+        function updateSyncStatus(type) {
+            const el = document.getElementById('sync-status');
+            const txt = document.getElementById('sync-text');
+            if (!el || !txt) return;
+
+            if (type === 'connected') {
+                el.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-800 text-xs text-emerald-400 font-medium";
+                txt.textContent = "Terhubung (Real-time)";
+            } else {
+                el.className = "flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800 border border-slate-700 text-xs text-amber-400 font-medium";
+                txt.textContent = "Mode Lokal / Offline";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            window.initChart();
+            initApp();
+        });
+    </script>
+</body>
+</html>
