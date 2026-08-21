@@ -553,7 +553,7 @@
 
         const savedUrls = JSON.parse(localStorage.getItem('berakhlak_category_drive_urls')) || {};
         window.categoryDriveUrls = { ...DEFAULT_CATEGORY_DRIVE_URLS, ...savedUrls };
-        window.appsScriptUrl = localStorage.getItem('berakhlak_sheets_webapp_url') || '';
+        window.appsScriptUrl = localStorage.getItem('berakhlak_sheets_webapp_url') || 'https://script.google.com/macros/s/AKfycbxDNw8XUJS6iyC48RrNg0ZzmIyz0u349Ei9S06UAtWAZ1a_jt4sk3w5zkNVnGOeA0tg/exec';
         
         window.tasks = [];
         window.currentRole = 'leader';
