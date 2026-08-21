@@ -1253,6 +1253,25 @@
             window.initChart();
             initApp();
         });
+        const SCRIPT_URL = https://script.google.com/macros/s/AKfycbxiL0JgC7dYUGy2lq0CSDKWAsq1slH5Vy4Dws1bPr7AIvN5moa1kHNO73l1Ig1DjbSh/exec;
+
+async function loadDataOnline() {
+  const response = await fetch(SCRIPT_URL);
+  const data = await response.json();
+  if (data && data.length > 0) {
+    // Perbarui variabel state tasks di dashboard Anda dengan data dari sheet
+    tasks = data;
+    renderTasks(); 
+  }
+}
+        async function saveDataOnline() {
+  await fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(tasks)
+  });
+}
     </script>
 </body>
 </html>
