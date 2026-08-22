@@ -1231,37 +1231,29 @@
             }, 3000);
         };
 // ==========================================
-// KODE ATURAN DEFAULT SIMPAN/Buka UTAMA
+// KODE ATURAN DEFAULT SIMPAN/BUKA UTAMA
 // ==========================================
 window.addEventListener('DOMContentLoaded', () => {
-    // 1. Paksa mode default ke Mode Tim
+    // 1. Set variabel role awal ke Mode Tim
     window.currentRole = 'team';
 
-    // 2. Perbaiki indikator teks/tombol UI agar tidak tertukar
-    const roleTextElem = document.getElementById('role-text') || document.getElementById('role-label') || document.getElementById('current-role-text');
-    if (roleTextElem) {
-        roleTextElem.innerText = 'Mode Tim';
-    }
-
-    // 3. Sembunyikan/Tampilkan elemen sesuai Mode Tim
-    const leaderElements = document.querySelectorAll('.leader-only, [data-role="leader"]');
-    leaderElements.forEach(el => {
-        el.style.display = 'none';
-    });
-
-    // 4. Inisialisasi Chart jika ada
-    if (typeof window.initChart === 'function') {
-        window.initChart();
-    }
-
-    // 5. Render Ulang Tabel untuk Mode Tim
-    if (typeof renderTasks === 'function') {
+    // 2. Jalankan fungsi bawaan sistem untuk memperbarui tampilan UI & Tabel secara konsisten
+    if (typeof window.switchRole === 'function') {
+        window.switchRole('team');
+    } else if (typeof window.toggleRole === 'function') {
+        window.toggleRole('team');
+    } else if (typeof renderTasks === 'function') {
         renderTasks();
     } else if (typeof renderTable === 'function') {
         renderTable();
     }
 
-    // 6. Jalankan pengambilan data otomatis dari Google Sheets
+    // 3. Inisialisasi Chart jika tersedia
+    if (typeof window.initChart === 'function') {
+        window.initChart();
+    }
+
+    // 4. Ambil data dari Google Sheets secara otomatis
     if (window.appsScriptUrl && typeof fetchTasksFromSheets === 'function') {
         fetchTasksFromSheets();
     }
