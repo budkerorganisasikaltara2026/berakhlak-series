@@ -404,57 +404,30 @@
         </div>
     </div>
 
-    <!-- File Upload / Drive Link Modal -->
-    <div id="modal-upload" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-base font-bold text-slate-800"><i class="fa-solid fa-cloud-arrow-up text-emerald-600 mr-2"></i> Unggah Lampiran Hasil Tugas</h3>
-                <button onclick="closeUploadModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            <div class="space-y-4 text-xs">
-                <input type="hidden" id="upload-task-id">
-                <input type="hidden" id="upload-task-category">
-                
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                    <span class="text-slate-400 text-[10px] block font-bold uppercase">Kegiatan / Pekerjaan</span>
-                    <span id="upload-task-title" class="font-semibold text-slate-800 text-sm"></span>
-                </div>
+    <!-- Modal Unggah Lampiran (Direvisi) -->
+<div class="modal-body">
+  <div class="mb-4 text-center p-4 bg-light rounded-3 border">
+    <i class="bi bi-folder-symlink display-4 text-primary mb-2"></i>
+    <h6>Akses Folder Drive Bidang</h6>
+    <p class="text-muted small">
+      Silakan unggah dokumen/berkas hasil pengerjaan langsung ke folder Google Drive resmi bidang ini.
+    </p>
+    <a id="btnFolderDriveBidang" href="#" target="_blank" class="btn btn-success fw-bold px-4">
+      <i class="bi bi-google-drive me-2"></i>Buka Folder Drive Bidang
+    </a>
+  </div>
 
-                <!-- Step 1: Upload / Choose File directly -->
-                <div class="space-y-1.5">
-                    <label class="block font-semibold text-slate-700">1. Pilih File Dokumen dari Perangkat</label>
-                    <div class="border-2 border-dashed border-emerald-300 bg-emerald-50/50 rounded-xl p-4 text-center hover:bg-emerald-50 transition cursor-pointer" onclick="document.getElementById('upload-file-input').click()">
-                        <i class="fa-solid fa-file-arrow-up text-3xl text-emerald-600 mb-2"></i>
-                        <p class="font-medium text-slate-700 text-xs">Klik di sini untuk memilih file</p>
-                        <p id="selected-filename-display" class="text-[11px] text-emerald-700 font-bold mt-1">Belum ada file dipilih</p>
-                        <input type="file" id="upload-file-input" class="hidden" onchange="handleFileSelection(event)">
-                    </div>
-                </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Tautan / Link File Drive (Opsional)</label>
+    <input type="url" id="inputDriveUrl" class="form-control" placeholder="https://drive.google.com/file/d/...">
+    <div class="form-text">Tempelkan link file yang telah diunggah ke folder Drive di sini agar tercatat di sistem.</div>
+  </div>
 
-                <!-- Step 2: Auto-directed Category Drive Folder -->
-                <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
-                    <div>
-                        <span id="upload-category-folder-name" class="font-bold text-slate-800 block text-xs">Folder Drive Bidang</span>
-                        <span class="text-[10px] text-slate-500">File akan disimpan ke folder Drive bidang ini</span>
-                    </div>
-                    <button type="button" onclick="openCategoryDriveFolder()" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 text-xs shadow-sm whitespace-nowrap flex items-center gap-1.5">
-                        <i class="fa-brands fa-google-drive text-sm"></i> Buka Folder Drive
-                    </button>
-                </div>
-
-                <!-- Optional Note -->
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Catatan Tambahan (Opsional)</label>
-                    <input type="text" id="upload-filename-custom" placeholder="Nama dokumen / penjelasan ringkas..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
-                </div>
-
-                <div class="flex justify-end gap-2 pt-3 border-t">
-                    <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium">Batal</button>
-                    <button type="button" onclick="saveUpload()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm">Simpan & Mark Selesai</button>
-                </div>
-            </div>
-        </div>
-    </div>
+  <div class="mb-3">
+    <label class="form-label fw-semibold">Catatan / Nama Berkas</label>
+    <input type="text" id="inputCatatanBerkas" class="form-control" placeholder="Contoh: KAK BerAKHLAK Series 2.0.docx">
+  </div>
+</div>
 
     <!-- Google Sheets Configuration Modal -->
     <div id="modal-sheets-config" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4">
