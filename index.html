@@ -1231,14 +1231,21 @@
             }, 3000);
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            window.initChart();
-            if (window.appsScriptUrl) {
-                fetchTasksFromSheets();
-            } else {
-                updateSyncUI('offline', 'Koneksikan Sheets');
-            }
-        });
+       window.addEventListener('DOMContentLoaded', () => {
+    window.currentRole = 'team'; // Paksa ke mode team
+    
+    // Jika ada fungsi switchRole atau setRole, panggil langsung untuk mengupdate UI
+    if (typeof switchRole === 'function') {
+        switchRole('team');
+    } else if (typeof setRole === 'function') {
+        setRole('team');
+    }
+    
+    window.initChart();
+    if (window.appsScriptUrl) {
+        fetchTasksFromSheets();
+    }
+});
     </script>
 </body>
 </html>
