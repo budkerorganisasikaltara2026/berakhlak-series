@@ -1236,9 +1236,9 @@
     
     // Jika ada fungsi switchRole atau setRole, panggil langsung untuk mengupdate UI
     if (typeof switchRole === 'function') {
-        switchRole('leader');
+        switchRole('team');
     } else if (typeof setRole === 'function') {
-        setRole('leader');
+        setRole('team');
     }
     
     window.initChart();
