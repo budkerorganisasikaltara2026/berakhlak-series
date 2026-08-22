@@ -1230,19 +1230,39 @@
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         };
+// ==========================================
+// KODE ATURAN DEFAULT SIMPAN/Buka UTAMA
+// ==========================================
+window.addEventListener('DOMContentLoaded', () => {
+    // 1. Paksa mode default ke Mode Tim
+    window.currentRole = 'team';
 
-       window.addEventListener('DOMContentLoaded', () => {
-    window.currentRole = 'team'; // Paksa ke mode team
-    
-    // Jika ada fungsi switchRole atau setRole, panggil langsung untuk mengupdate UI
-    if (typeof switchRole === 'function') {
-        switchRole('team');
-    } else if (typeof setRole === 'function') {
-        setRole('team');
+    // 2. Perbaiki indikator teks/tombol UI agar tidak tertukar
+    const roleTextElem = document.getElementById('role-text') || document.getElementById('role-label') || document.getElementById('current-role-text');
+    if (roleTextElem) {
+        roleTextElem.innerText = 'Mode Tim';
     }
-    
-    window.initChart();
-    if (window.appsScriptUrl) {
+
+    // 3. Sembunyikan/Tampilkan elemen sesuai Mode Tim
+    const leaderElements = document.querySelectorAll('.leader-only, [data-role="leader"]');
+    leaderElements.forEach(el => {
+        el.style.display = 'none';
+    });
+
+    // 4. Inisialisasi Chart jika ada
+    if (typeof window.initChart === 'function') {
+        window.initChart();
+    }
+
+    // 5. Render Ulang Tabel untuk Mode Tim
+    if (typeof renderTasks === 'function') {
+        renderTasks();
+    } else if (typeof renderTable === 'function') {
+        renderTable();
+    }
+
+    // 6. Jalankan pengambilan data otomatis dari Google Sheets
+    if (window.appsScriptUrl && typeof fetchTasksFromSheets === 'function') {
         fetchTasksFromSheets();
     }
 });
