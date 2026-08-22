@@ -77,10 +77,10 @@
 
                 <!-- Role Toggle -->
                 <div class="bg-slate-800 p-1 rounded-xl border border-slate-700 flex items-center">
-                    <button id="btn-role-leader" onclick="switchRole('leader')" class="px-3 py-1 rounded-lg text-xs font-semibold transition-all bg-sky-600 text-white shadow">
+                    <button id="btn-role-leader" onclick="switchRole('leader')" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all">
                         <i class="fa-solid fa-user-shield mr-1"></i> Mode Leader
                     </button>
-                    <button id="btn-role-team" onclick="switchRole('team')" class="px-3 py-1 rounded-lg text-xs font-semibold text-slate-300 hover:text-white transition-all">
+                    <button id="btn-role-team" onclick="switchRole('team')" class="px-3 py-1 rounded-lg text-xs font-semibold transition-all bg-sky-600 text-white shadow">
                         <i class="fa-solid fa-users mr-1"></i> Mode Tim
                     </button>
                 </div>
@@ -129,11 +129,11 @@
         <div id="role-banner" class="bg-sky-50 border border-sky-200 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
             <div class="flex items-center gap-3">
                 <span class="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-lg">
-                    <i id="role-banner-icon" class="fa-solid fa-user-shield"></i>
+                    <i id="role-banner-icon" class="fa-solid fa-users"></i>
                 </span>
                 <div>
-                    <h3 id="role-banner-title" class="font-bold text-sky-900">Selamat Datang, Leader Panitia!</h3>
-                    <p id="role-banner-desc" class="text-xs text-sky-700">Anda dapat membagi PIC tugas, menentukan deadline, serta memantau seluruh progres kegiatan secara real-time.</p>
+                    <h3 id="role-banner-title" class="font-bold text-sky-900">Selamat Datang, Tim Pelaksana!</h3>
+                    <p id="role-banner-desc" class="text-xs text-sky-700">Silakan periksa tugas yang menjadi tanggung jawab Anda, perbarui status progress, dan unggah berkas hasil pengerjaan.</p>
                 </div>
             </div>
             <!-- Role Banner Actions -->
@@ -144,7 +144,7 @@
                 <button onclick="openDriveConfigModal()" class="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300 rounded-xl hover:bg-emerald-100 transition shadow-sm flex items-center gap-1.5">
                     <i class="fa-brands fa-google-drive"></i> Link Drive Bidang
                 </button>
-                <button id="btn-add-task" onclick="openTaskModal()" class="px-3.5 py-1.5 text-xs font-semibold bg-sky-600 text-white rounded-xl hover:bg-sky-700 transition shadow-sm">
+                <button id="btn-add-task" onclick="openTaskModal()" class="px-3.5 py-1.5 text-xs font-semibold bg-sky-600 text-white rounded-xl hover:bg-sky-700 transition shadow-sm hidden">
                     <i class="fa-solid fa-plus mr-1"></i> Tambah Tugas
                 </button>
             </div>
@@ -435,7 +435,7 @@
                 <div class="bg-slate-100 border border-slate-200 rounded-xl p-3 flex items-center justify-between">
                     <div>
                         <span id="upload-category-folder-name" class="font-bold text-slate-800 block text-xs">Folder Drive Bidang</span>
-                        <span class="text-[10px] text-slate-500">File akan disimpan ke folder Drive bidang ini</span>
+                        <span class="text-[10px] text-slate-500">File akan diunggah otomatis ke Drive bidang ini</span>
                     </div>
                     <button type="button" onclick="openCategoryDriveFolder()" class="px-3 py-1.5 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 text-xs shadow-sm whitespace-nowrap flex items-center gap-1.5">
                         <i class="fa-brands fa-google-drive text-sm"></i> Buka Folder Drive
@@ -444,13 +444,15 @@
 
                 <!-- Optional Note -->
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Catatan Tambahan (Opsional)</label>
+                    <label class="block font-semibold text-slate-700 mb-1">Nama File di Drive (Opsional)</label>
                     <input type="text" id="upload-filename-custom" placeholder="Nama dokumen / penjelasan ringkas..." class="w-full p-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 outline-none">
                 </div>
 
                 <div class="flex justify-end gap-2 pt-3 border-t">
                     <button type="button" onclick="closeUploadModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-slate-600 hover:bg-slate-100 font-medium">Batal</button>
-                    <button type="button" onclick="saveUpload()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm">Simpan & Mark Selesai</button>
+                    <button type="button" id="btn-save-upload" onclick="saveUpload()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-sm flex items-center gap-1.5">
+                        <span>Simpan & Upload ke Drive</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -559,7 +561,21 @@
         window.currentRole = 'team';
         window.selectedCategory = 'ALL';
         window.statusChart = null;
-        window.isSyncing = false;
+
+        window.formatIndonesianDate = function(dateStr) {
+            if (!dateStr) return '-';
+            const parts = String(dateStr).split('-');
+            if (parts.length === 3) {
+                const year = parts[0];
+                const monthIdx = parseInt(parts[1], 10) - 1;
+                const day = parseInt(parts[2], 10);
+                const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                if (monthIdx >= 0 && monthIdx < 12 && !isNaN(day)) {
+                    return `${day} ${months[monthIdx]} ${year}`;
+                }
+            }
+            return dateStr;
+        };
 
         window.initChart = function() {
             const ctx = document.getElementById('statusChart');
@@ -706,7 +722,7 @@
                 emptyState?.classList.add('hidden');
             }
 
-            filtered.forEach((t, idx) => {
+            filtered.forEach((t) => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-slate-50 transition border-b border-slate-100 text-xs';
 
@@ -772,12 +788,12 @@
                             <span class="font-medium text-slate-700">${t.pic || '<span class="text-slate-300 italic">Belum ada</span>'}</span>
                         `}
                     </td>
-<td class="py-3 px-4 font-medium text-slate-600">
-    ${isLeader ? `
-        <input type="date" value="${t.deadline || ''}" onchange="quickUpdateTask('${t.id}', 'deadline', this.value)" class="bg-transparent text-xs outline-none text-slate-600">
-    ` : `
-        <span>${t.deadline ? new Date(t.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-'}</span>
-    `}
+                    <td class="py-3 px-4 font-medium text-slate-600">
+                        ${isLeader ? `
+                            <input type="date" value="${t.deadline || ''}" onchange="quickUpdateTask('${t.id}', 'deadline', this.value)" class="bg-transparent text-xs outline-none text-slate-600">
+                        ` : `
+                            <span>${window.formatIndonesianDate(t.deadline)}</span>
+                        `}
                     </td>
                     <td class="py-3 px-4">${statusSelectHTML}</td>
                     <td class="py-3 px-4">${fileCell}</td>
@@ -1042,7 +1058,7 @@
                 }
             } else {
                 const newId = category + (Date.now() % 10000);
-                newTask = {
+                const newTask = {
                     id: newId,
                     category,
                     categoryName: catNames[category],
@@ -1140,24 +1156,72 @@
             const category = document.getElementById('upload-task-category').value;
             const fileInput = document.getElementById('upload-file-input');
             const customName = document.getElementById('upload-filename-custom').value;
+            const btnSave = document.getElementById('btn-save-upload');
 
             if (!id) return;
 
-            let fileName = 'Dokumen_Selesai.pdf';
             if (fileInput.files && fileInput.files[0]) {
-                fileName = fileInput.files[0].name;
-            } else if (customName.trim() !== '') {
-                fileName = customName.trim();
+                const file = fileInput.files[0];
+                
+                if (btnSave) {
+                    btnSave.disabled = true;
+                    btnSave.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Mengunggah...';
+                }
+                showToast("Mengunggah file ke Google Drive...", "info");
+
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const base64Data = e.target.result;
+
+                    try {
+                        const res = await fetch(window.appsScriptUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({
+                                action: 'uploadFile',
+                                category: category,
+                                fileName: customName.trim() || file.name,
+                                mimeType: file.type || 'application/octet-stream',
+                                fileData: base64Data
+                            })
+                        });
+
+                        const data = await res.json();
+                        if (data.status === 'success') {
+                            const actualUrl = data.fileUrl;
+                            const actualName = data.fileName;
+
+                            await quickUpdateTask(id, 'fileName', actualName);
+                            await quickUpdateTask(id, 'fileUrl', actualUrl);
+                            await quickUpdateTask(id, 'status', 'Selesai');
+
+                            showToast(`File "${actualName}" berhasil diunggah ke Drive Bidang ${category}!`, "success");
+                            closeUploadModal();
+                        } else {
+                            showToast("Gagal unggah ke Drive: " + (data.message || "Error"), "error");
+                        }
+                    } catch (err) {
+                        console.error("Upload error:", err);
+                        showToast("Gagal mengunggah file ke Google Drive.", "error");
+                    } finally {
+                        if (btnSave) {
+                            btnSave.disabled = false;
+                            btnSave.innerHTML = '<span>Simpan & Upload ke Drive</span>';
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            } else {
+                let fileName = customName.trim() || 'Dokumen_Selesai.pdf';
+                const folderUrl = window.categoryDriveUrls[category] || DEFAULT_CATEGORY_DRIVE_URLS[category] || DEFAULT_CATEGORY_DRIVE_URLS['A'];
+
+                await quickUpdateTask(id, 'fileName', fileName);
+                await quickUpdateTask(id, 'fileUrl', folderUrl);
+                await quickUpdateTask(id, 'status', 'Selesai');
+
+                showToast(`Status tugas berhasil diubah menjadi Selesai!`, "success");
+                closeUploadModal();
             }
-
-            const folderUrl = window.categoryDriveUrls[category] || DEFAULT_CATEGORY_DRIVE_URLS[category] || DEFAULT_CATEGORY_DRIVE_URLS['A'];
-
-            await quickUpdateTask(id, 'fileName', fileName);
-            await quickUpdateTask(id, 'fileUrl', folderUrl);
-            await quickUpdateTask(id, 'status', 'Selesai');
-
-            showToast(`File "${fileName}" berhasil ditautkan ke Bidang ${category}!`, "success");
-            closeUploadModal();
         };
 
         window.openDriveConfigModal = function() {
@@ -1230,34 +1294,19 @@
                 toast.classList.add('translate-y-20', 'opacity-0');
             }, 3000);
         };
-// ==========================================
-// KODE ATURAN DEFAULT SIMPAN/BUKA UTAMA
-// ==========================================
-window.addEventListener('DOMContentLoaded', () => {
-    // 1. Set variabel role awal ke Mode Tim
-    window.currentRole = 'team';
 
-    // 2. Jalankan fungsi bawaan sistem untuk memperbarui tampilan UI & Tabel secara konsisten
-    if (typeof window.switchRole === 'function') {
-        window.switchRole('team');
-    } else if (typeof window.toggleRole === 'function') {
-        window.toggleRole('team');
-    } else if (typeof renderTasks === 'function') {
-        renderTasks();
-    } else if (typeof renderTable === 'function') {
-        renderTable();
-    }
+        // --- INITALIZATION ON LOAD ---
+        window.addEventListener('DOMContentLoaded', () => {
+            window.switchRole('team');
 
-    // 3. Inisialisasi Chart jika tersedia
-    if (typeof window.initChart === 'function') {
-        window.initChart();
-    }
+            if (typeof window.initChart === 'function') {
+                window.initChart();
+            }
 
-    // 4. Ambil data dari Google Sheets secara otomatis
-    if (window.appsScriptUrl && typeof fetchTasksFromSheets === 'function') {
-        fetchTasksFromSheets();
-    }
-});
+            if (window.appsScriptUrl && typeof fetchTasksFromSheets === 'function') {
+                fetchTasksFromSheets();
+            }
+        });
     </script>
 </body>
 </html>
